@@ -221,3 +221,22 @@ These bundled presets can be used by setting ``repeat-fu-preset``.
    - Include any prefix commands.
 
 .. END PRESETS
+
+
+Other Packages
+==============
+
+`dot-mode <https://melpa.org/#/dot-mode>`__
+   Dot-mode is uses the same method as Repeat-fu,
+   the main difference is it repeats all preceding commands that change the buffer
+   with an optional prefix command.
+
+   For non-modal editing setups, the difference between this and Repeat-fu is not so large,
+   (it matches the ``'multi`` preset).
+   For modal editing the difference is more significant, allowing the "edit" to be repeated to
+   include motion/selection commands.
+
+   Note that Repeat-fu was originally based on Dot-mode, however it diverged enough
+   that it didn't seem practical to attempt to integrate back into the original package.
+Various others (``defrepeater``, ``easy-repeat``, ``repeater``)
+   Are lightweight packages that only support repeating single commands.
