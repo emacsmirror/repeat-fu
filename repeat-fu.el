@@ -643,10 +643,11 @@ Then it can be called with `call-last-kbd-macro', named with
                       (progn
                         (require preset-sym)
                         t)
-                    (error (message "repeat-fu: preset '%s' not found! (%s)"
-                                    preset-value
-                                    (error-message-string err))
-                           nil))
+                    (error
+                     (message "repeat-fu: preset '%s' not found! (%s)"
+                              preset-value
+                              (error-message-string err))
+                     nil))
               (setq repeat-fu-backend (funcall preset-sym))))))
 
       (repeat-fu--preset-refresh)
