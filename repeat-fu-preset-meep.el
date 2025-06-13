@@ -19,11 +19,11 @@
 (declare-function meep-state "meep" ())
 
 (declare-function meep-state-insert "meep" ())
-(declare-function meep-mark-set-on-motion-commands-no-repeat "meep" ())
-(declare-function meep-mark-set-on-motion-commands-adjust "meep" ())
-(declare-function meep-mark-set-on-motion-commands "meep" ())
-(declare-function meep-mark-on-motion-exclude-commands "meep" ())
-(declare-function meep-digit-argument-commands "meep" ())
+(declare-function meep-mark-set-on-motion-commands-no-repeat "meep" (cmd))
+(declare-function meep-mark-set-on-motion-commands-adjust "meep" (cmd))
+(declare-function meep-mark-set-on-motion-commands "meep" (cmd))
+(declare-function meep-mark-on-motion-exclude-commands "meep" (cmd))
+(declare-function meep-digit-argument-commands "meep" (cmd))
 
 (defconst repeat-fu-preset-meep--flag-is-active repeat-fu-flag-free)
 
