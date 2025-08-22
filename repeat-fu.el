@@ -47,6 +47,12 @@ By convention, the following rules are followed for bundled presets.
   "When true, `repeat-fu' shares its command buffer between buffers."
   :type 'boolean)
 
+(defcustom repeat-fu-last-used-on-quit t
+  "When the last command is quit, repeat the last used macro.
+This allows any edit (including accidental edits), to be ignored
+so the last repeated action can be reused."
+  :type 'boolean)
+
 (defcustom repeat-fu-buffer-size 512
   "Maximum number of steps to store.
 When nil, all commands are stored,
@@ -291,6 +297,11 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 (defun repeat-fu--extract-repeat-macro-or-last ()
   "Extract a macro from previous commands or return the last extracted macro."
   (declare (important-return-value t))
+
+  (when repeat-fu-last-used-on-quit
+    (when (eq last-command 'keyboard-quit)
+      (repeat-fu--clear)))
+
   (let ((kbuf-list (repeat-fu--extract-fn-wrapper (repeat-fu--cmd-buffer-get))))
     (when kbuf-list
       (repeat-fu--clear)
