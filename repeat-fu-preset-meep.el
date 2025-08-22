@@ -208,7 +208,7 @@ DATA-PRE stores the state when the command began."
                 ;; In this case there is no need to make any further changes.
                 ;; We can continue to scan for mark commands.
                 (let ((cmd (funcall elem-cmd-fn index-max)))
-                  (unless (memq cmd (list 'meep-reverse))
+                  (unless (memq cmd (list 'meep-reverse 'meep-reverse-motion))
                     ;; This is an opinionated decision.
                     ;; Check the command that invoked this because selection
                     ;; could have been invoked by the mouse cursor or by
