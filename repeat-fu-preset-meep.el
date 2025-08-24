@@ -18,12 +18,13 @@
 
 (declare-function meep-state "meep" ())
 
+(declare-function meep-command-is-digit-argument "meep" (cmd))
+(declare-function meep-command-is-mark-activate "meep" (cmd))
+(declare-function meep-command-is-mark-on-motion-exclude "meep" (cmd))
+(declare-function meep-command-is-mark-set-on-motion "meep" (cmd))
+(declare-function meep-command-is-mark-set-on-motion-adjust "meep" (cmd))
+(declare-function meep-command-is-mark-set-on-motion-no-repeat "meep" (cmd))
 (declare-function meep-state-insert "meep" ())
-(declare-function meep-mark-set-on-motion-commands-no-repeat "meep" (cmd))
-(declare-function meep-mark-set-on-motion-commands-adjust "meep" (cmd))
-(declare-function meep-mark-set-on-motion-commands "meep" (cmd))
-(declare-function meep-mark-on-motion-exclude-commands "meep" (cmd))
-(declare-function meep-digit-argument-commands "meep" (cmd))
 
 (defconst repeat-fu-preset-meep--flag-is-active repeat-fu-flag-free)
 
@@ -163,7 +164,7 @@ DATA-PRE stores the state when the command began."
             (unless (funcall elem-is-active-fn (1+ index-max))
               (let ((cmd (funcall elem-cmd-fn index-max)))
                 ;; The command doesn't respect non-active region.
-                (when (meep-mark-on-motion-exclude-commands cmd)
+                (when (meep-command-is-mark-on-motion-exclude cmd)
                   (setq do-scan-for-mark-commands nil)))))
 
           ;; If the state was exited, keep this as part of the repeated command.
@@ -192,7 +193,7 @@ DATA-PRE stores the state when the command began."
                                ;; ignore the selection creation entirely.
                                (repeat-fu-command-test-skip-active cmd)
                                ;; Invoked by a jump action which should not be repeated.
-                               (meep-mark-set-on-motion-commands-no-repeat cmd))))
+                               (meep-command-is-mark-set-on-motion-no-repeat cmd))))
                     ;; Break.
                     (setq index-max vec-end)
                     (setq ok nil)))
@@ -208,7 +209,7 @@ DATA-PRE stores the state when the command began."
                 ;; In this case there is no need to make any further changes.
                 ;; We can continue to scan for mark commands.
                 (let ((cmd (funcall elem-cmd-fn index-max)))
-                  (unless (memq cmd (list 'meep-reverse 'meep-reverse-motion))
+                  (unless (meep-command-is-mark-activate cmd)
                     ;; This is an opinionated decision.
                     ;; Check the command that invoked this because selection
                     ;; could have been invoked by the mouse cursor or by
@@ -238,18 +239,18 @@ DATA-PRE stores the state when the command began."
               ;; check if the motion should be included before the edit.
               (while (and (< index-max vec-end)
                           ;; Check this command can be adjusted.
-                          (meep-mark-set-on-motion-commands-adjust
+                          (meep-command-is-mark-set-on-motion-adjust
                            (funcall elem-cmd-fn (1+ index-max))))
                 (setq index-max (1+ index-max)))
 
               ;; Numeric commands are a special case where the "pre" command is needed
               ;; since the post command gets set by running the macro.
               (while (and (< index-max vec-end)
-                          (meep-digit-argument-commands (funcall elem-cmd-fn (1+ index-max))))
+                          (meep-command-is-digit-argument (funcall elem-cmd-fn (1+ index-max))))
                 (setq index-max (1+ index-max)))
 
               (when (and (< index-max vec-end)
-                         (meep-mark-set-on-motion-commands (funcall elem-cmd-fn (1+ index-max))))
+                         (meep-command-is-mark-set-on-motion (funcall elem-cmd-fn (1+ index-max))))
                 (setq index-max (1+ index-max))
                 (setq ok t))
 
