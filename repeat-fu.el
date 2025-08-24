@@ -420,6 +420,11 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 
     success))
 
+(defun repeat-fu--mode-enabled-or-error ()
+  "Raise an error if the mode isn't enabled."
+  (unless repeat-fu-mode
+    (user-error "repeat-fu: `repeat-fu-mode' must be enabled!")))
+
 
 ;; ---------------------------------------------------------------------------
 ;; Internal Command Marking
@@ -577,6 +582,7 @@ to make these checks conditional may be supported in the future."
 The prefix argument ARG serves as a repeat count."
   (declare (important-return-value nil))
   (interactive "p")
+  (repeat-fu--mode-enabled-or-error)
 
   (unless arg
     (setq arg 1))
@@ -608,6 +614,7 @@ Then it can be called with `call-last-kbd-macro', named with
 `name-last-kbd-macro'"
   (declare (important-return-value nil))
   (interactive)
+  (repeat-fu--mode-enabled-or-error)
 
   (let ((kbuf (repeat-fu--extract-repeat-macro-or-last)))
     (cond
