@@ -204,9 +204,9 @@ DATA-PRE stores the state when the command began."
                 ;; not typically started by other actions, so keep this unless
                 ;; there is a good reason to change it.
 
-                ;; Reverse is a special case, as this will have selected "and"
-                ;; depended on the previous motion.
-                ;; In this case there is no need to make any further changes.
+                ;; `meep-exchange-point-and-mark' (or similar `meep-command-is-mark-activate')
+                ;; functions are a special case, as this will have selected "and" depended on the
+                ;; previous motion. In this case there is no need to make any further changes.
                 ;; We can continue to scan for mark commands.
                 (let ((cmd (funcall elem-cmd-fn index-max)))
                   (unless (meep-command-is-mark-activate cmd)
@@ -222,14 +222,14 @@ DATA-PRE stores the state when the command began."
                              ;; may select but are not primarily selection commands
                              ;; so it's confusing to include them here.
                              (list 'meep-region-toggle 'meep-region-syntax-expand))
-                      (setq ok nil)))
+                      (setq ok nil))
 
-                  (cond
-                   (ok
-                    ;; Don't scan for mark-commands as the selection commands serve this purpose.
-                    (setq do-scan-for-mark-commands nil))
-                   (t
-                    (setq index-max index-max-orig)))))))
+                    (cond
+                     (ok
+                      ;; Don't scan for mark-commands as the selection commands serve this purpose.
+                      (setq do-scan-for-mark-commands nil))
+                     (t
+                      (setq index-max index-max-orig))))))))
 
           ;; If the first insert command changes, scan for commands that mark the region.
           (when do-scan-for-mark-commands
@@ -274,6 +274,8 @@ DATA-PRE stores the state when the command began."
             ;; All command macro.
             (let ((i index-max))
               (while (>= i index-min)
+                ;; Handy for debugging.
+                ;; (printf "> %S\n" (aref vec i))
                 (setq result (vconcat result (car (aref vec i))))
                 (setq i (1- i))))
 
