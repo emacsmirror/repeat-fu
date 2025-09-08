@@ -60,11 +60,11 @@ def text_insert_into_bounds(
 
     if beg_index == -1:
         if error_when_missing:
-            print('Error: {!r} not found'.format(beg_comment))
+            print("Error: {!r} not found".format(beg_comment))
         return None
     if end_index == -1:
         if error_when_missing:
-            print('Error: {!r} not found'.format(end_comment))
+            print("Error: {!r} not found".format(end_comment))
         return None
 
     beg_index += len(beg_comment) + 1
@@ -144,16 +144,16 @@ def readme_patch_docstrings(data: str) -> str | int:
     )
 
     emacs_output = (
-        p.stdout.decode('utf-8').rstrip() +
-        '\n\n'
+        p.stdout.decode("utf-8").rstrip() +
+        "\n\n"
     )
     del p
 
     # strip trailing space
-    emacs_output = re.sub(r'[ \t]+(\n|\Z)', r'\1', emacs_output)
+    emacs_output = re.sub(r"[ \t]+(\n|\Z)", r"\1", emacs_output)
     emacs_output = patch_help_test(emacs_output)
 
-    data_result = text_insert_into_bounds(data, emacs_output, '.. BEGIN VARIABLES', '.. END VARIABLES')
+    data_result = text_insert_into_bounds(data, emacs_output, ".. BEGIN VARIABLES", ".. END VARIABLES")
     if data_result is None:
         return 1
 
@@ -195,7 +195,7 @@ def readme_patch_presets(data: str) -> str | int:
             emacs_output.append(text)
             emacs_output.append("\n\n")
 
-    data_result = text_insert_into_bounds(data, "".join(emacs_output), '.. BEGIN PRESETS', '.. END PRESETS')
+    data_result = text_insert_into_bounds(data, "".join(emacs_output), ".. BEGIN PRESETS", ".. END PRESETS")
     if data_result is None:
         return 1
 
@@ -204,8 +204,9 @@ def readme_patch_presets(data: str) -> str | int:
 
 def main() -> int:
     # Try write reStructuredText directly!
+    filepath = "readme.rst"
     data: str | int = ""
-    with open('readme.rst', 'r', encoding='utf-8') as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         data = f.read()
 
     data = readme_patch_docstrings(data)
@@ -216,7 +217,7 @@ def main() -> int:
     if isinstance(data, int):
         return data
 
-    with open('readme.rst', 'w', encoding='utf-8') as f:
+    with open(filepath, "w", encoding="utf-8") as f:
         f.write(data)
 
     return 0
