@@ -106,15 +106,14 @@ Custom Variables
      This means it’s possible to undo the ``repeat-fu-execute`` and repeat the
      action at a different location instead of repeating the undo.
 
-``repeat-fu-last-used-on-quit``
-   When true, ``[keyboard-quit]`` (typically C-g),
-   calling ``[keyboard-quit]`` immediately before a ``repeat-fu`` commend
-   ignores the last edit and repeats the last repeated action.
-
-   This can be useful if an edit is made by accident.
-
 ``repeat-fu-global-mode``: ``t``
    When true, ``repeat-fu`` shares its command buffer between buffers.
+
+``repeat-fu-last-used-on-quit``: ``t``
+   When the last command is ``keyboard-quit``, repeat the last used macro.
+   This allows any edit, to be ignored so the last repeated action can be reused.
+
+   This can be useful if an edit is made by accident.
 
 ``repeat-fu-buffer-size``: ``512``
    Maximum number of steps to store.

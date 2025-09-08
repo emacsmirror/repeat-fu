@@ -48,9 +48,10 @@ By convention, the following rules are followed for bundled presets.
   :type 'boolean)
 
 (defcustom repeat-fu-last-used-on-quit t
-  "When the last command is quit, repeat the last used macro.
-This allows any edit (including accidental edits), to be ignored
-so the last repeated action can be reused."
+  "When the last command is `keyboard-quit', repeat the last used macro.
+This allows any edit, to be ignored so the last repeated action can be reused.
+
+This can be useful if an edit is made by accident."
   :type 'boolean)
 
 (defcustom repeat-fu-buffer-size 512
