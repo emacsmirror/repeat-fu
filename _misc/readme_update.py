@@ -43,7 +43,7 @@ def patch_help_test(emacs_output: str) -> str:
 
     # Replace lisp convention for single quote escaping
     # with a single quote.
-    emacs_output = emacs_output.replace("\\='", "'")
+    emacs_output = emacs_output.replace("\\\\='", "'")
 
     return emacs_output
 
