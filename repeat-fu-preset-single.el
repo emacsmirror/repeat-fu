@@ -19,6 +19,7 @@
 
 (require 'repeat-fu)
 
+
 ;; This is not needed currently.
 (defun repeat-fu-preset-single--pre-data ()
   "Pre command callback."
