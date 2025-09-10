@@ -79,12 +79,12 @@ DATA-PRE stores the state when the command began."
          (elem-scan-while-max-fn
           (lambda (i fn)
             (while (and (< i vec-end) (funcall fn (1+ i)))
-              (setq i (1+ i)))
+              (incf i))
             i))
          (elem-scan-while-min-fn
           (lambda (i fn)
             (while (and (> i 0) (funcall fn (1- i)))
-              (setq i (1- i)))
+              (decf i))
             i))
 
          ;; Local lookups.
@@ -131,7 +131,7 @@ DATA-PRE stores the state when the command began."
             (unless (repeat-fu-command-test-skip-change (funcall elem-cmd-fn i))
               (setq index-change i)
               (setq i vec-len)))
-          (setq i (1+ i))))
+          (incf i)))
 
       (cond
        ((eq -1 index-change)
@@ -167,7 +167,7 @@ DATA-PRE stores the state when the command began."
             ;; If the first command "entered" insert mode, skip it.
             ;; Since the purpose is to replay in insert mode without entering/exiting.
             (unless (eq 'insert (funcall elem-state-pre-fn index-max-insert))
-              (setq index-max-insert (1- index-max-insert)))
+              (decf index-max-insert))
 
             (unless (funcall elem-is-change-fn index-max)
               ;; If entering insert mode did not change anything (not the "change" command).
@@ -177,7 +177,7 @@ DATA-PRE stores the state when the command began."
 
           ;; If the state was exited, keep this as part of the repeated command.
           (when (and (> index-min 0) (eq 'meow-insert-exit (funcall elem-cmd-fn (1- index-min))))
-            (setq index-min (1- index-min)))
+            (decf index-min))
 
           ;; The last command before selection.
           (setq index-max-no-active index-max)
@@ -191,7 +191,7 @@ DATA-PRE stores the state when the command began."
                     (ok t))
 
                 (while (and (< index-max vec-end) (funcall elem-is-active-fn (1+ index-max)))
-                  (setq index-max (1+ index-max))
+                  (incf index-max)
 
                   ;; Any change within the selection breaks the chain.
                   (when (or (funcall elem-is-change-fn index-max)
@@ -226,7 +226,7 @@ DATA-PRE stores the state when the command began."
             (let ((i index-max))
               (while (>= i index-min)
                 (setq result (vconcat result (car (aref vec i))))
-                (setq i (1- i))))
+                (decf i)))
 
             ;; Change only macro (no preceding selection).
             (cond
@@ -236,14 +236,14 @@ DATA-PRE stores the state when the command began."
               (let ((i index-max-no-active))
                 (while (>= i index-min)
                   (setq result-no-active (vconcat result-no-active (car (aref vec i))))
-                  (setq i (1- i))))))
+                  (decf i)))))
 
             ;; Insert mode only macro.
             (when (and index-min-insert index-max-insert)
               (let ((i index-max-insert))
                 (while (>= i index-min-insert)
                   (setq result-only-insert (vconcat result-only-insert (car (aref vec i))))
-                  (setq i (1- i)))))
+                  (decf i))))
 
             (list result result-no-active result-only-insert))))))))
 

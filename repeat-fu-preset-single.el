@@ -54,7 +54,7 @@
             (unless (repeat-fu-command-test-skip-change (funcall elem-cmd-fn i))
               (setq index-change i)
               (setq i vec-len)))
-          (setq i (1+ i))))
+          (incf i)))
 
       (cond
        ((eq -1 index-change)
@@ -68,12 +68,12 @@
 
           ;; Finally add all numeric-prefix commands (if any).
           (while (and (< index-max vec-end) (funcall elem-is-prefix-fn (1+ index-max)))
-            (setq index-max (1+ index-max)))
+            (incf index-max))
 
           (let ((i index-max))
             (while (>= i index-min)
               (setq result (vconcat result (car (aref vec i))))
-              (setq i (1- i)))
+              (decf i))
             (list result))))))))
 
 ;;;###autoload

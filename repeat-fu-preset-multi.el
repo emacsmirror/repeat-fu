@@ -70,7 +70,7 @@
             (unless (repeat-fu-command-test-skip-change (funcall elem-cmd-fn i))
               (setq index-change i)
               (setq i vec-len)))
-          (setq i (1+ i))))
+          (incf i)))
 
       (cond
        ((eq -1 index-change)
@@ -108,7 +108,7 @@
                           ;; Skip
                           (while (and (< i vec-end)
                                       (memq (funcall elem-cmd-fn (1+ i)) cmd-self-insert-compat))
-                            (setq i (1+ i)))
+                            (incf i))
                           (when (and (< i vec-end)
                                      (eq cmd-self-insert (funcall elem-cmd-fn (1+ i))))
                             (setq cmd cmd-self-insert))))
@@ -139,10 +139,10 @@
                 (let ((i index-max))
                   ;; Skip over ignore.
                   (while (and (< i vec-end) (funcall elem-change-ignore-fn (1+ i)))
-                    (setq i (1+ i)))
+                    (incf i))
                   ;; Scan up match.
                   (while (and (< i vec-end) (funcall elem-change-match-fn (1+ i)))
-                    (setq i (1+ i))
+                    (incf i)
                     (setq ok t))
 
                   (when ok
@@ -155,7 +155,7 @@
             (let ((index-max-orig index-max)
                   (ok t))
               (while (and (< index-max vec-end) (funcall elem-is-active-fn (1+ index-max)))
-                (setq index-max (1+ index-max))
+                (incf index-max)
 
                 ;; Any change within the selection breaks the chain.
                 (when (funcall elem-is-change-fn index-max)
@@ -167,12 +167,12 @@
 
           ;; Finally add all numeric-prefix commands (if any).
           (while (and (< index-max vec-end) (funcall elem-is-prefix-fn (1+ index-max)))
-            (setq index-max (1+ index-max)))
+            (incf index-max))
 
           (let ((i index-max))
             (while (>= i index-min)
               (setq result (vconcat result (car (aref vec i))))
-              (setq i (1- i))))
+              (decf i)))
 
           (cond
            ((eq index-max index-max-no-active)
@@ -181,7 +181,7 @@
             (let ((i index-max-no-active))
               (while (>= i index-min)
                 (setq result-no-active (vconcat result-no-active (car (aref vec i))))
-                (setq i (1- i))))))
+                (decf i)))))
 
           (list result result-no-active)))))))
 
