@@ -1,4 +1,3 @@
-
 ###############
 Emacs Repeat-FU
 ###############
@@ -43,16 +42,13 @@ This example shows how Repeat-FU can be used with the default emacs configuratio
 .. code-block:: elisp
 
    (use-package repeat-fu
-     :commands (repeat-fu-mode repeat-fu-execute)
-
-   (global-set-key (kbd "C-.") 'repeat-fu-execute)
-
-   ;; Enable bray for "typical" editing operation.
-   (add-hook
-    'after-change-major-mode-hook
-    (lambda ()
-      (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
-        (repeat-fu-mode))))
+      :commands (repeat-fu-mode repeat-fu-execute)
+      :bind
+      ("C-." . repeat-fu-execute)
+      :hook
+      (after-change-major-mode . (lambda ()
+                                   (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
+                                      (repeat-fu-mode)))))
 
 
 This example shows how Repeat-FU can be used with meow.
