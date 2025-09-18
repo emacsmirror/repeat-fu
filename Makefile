@@ -18,8 +18,8 @@ Environment Variables:
 endef
 # HELP_TEXT (end)
 
-# Needed for when tests are run from another directory.
-BASE_DIR := ${CURDIR}
+# Needed for when tests are run from another directory: `make -C ./path/to/tests`.
+BASE_DIR := $(CURDIR)
 
 EL_FILES=$(shell find ./ -type f -name '*.el')
 
@@ -34,6 +34,14 @@ EMACS_BATCH_CHECK_BIN?=$(shell which emacs-batch-check)
 export HELP_TEXT
 help: FORCE
 	@echo "$$HELP_TEXT"
+
+
+# -----------------------------------------------------------------------------
+# Maintenance
+
+docs: FORCE
+	@cd "$(BASE_DIR)" && \
+	python ./_misc/readme_update.py
 
 
 # -----------------------------------------------------------------------------
