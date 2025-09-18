@@ -481,7 +481,7 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 Commands that aren't related to editing should be marked especially save.
 The property is set to VALUE which should typically be true."
   (declare (important-return-value nil))
-  (repeat-fu--commands-mark commands value 'redo-fu-skip))
+  (repeat-fu--commands-mark commands value 'repeat-fu-skip))
 
 (defun repeat-fu--commands-mark-skip-active (commands value)
   "Ignore COMMANDS from region activation.
@@ -492,7 +492,7 @@ This should typically be used any region manipulation that uses the mouse.
 Commands such as save & undo should be included.
 The property is set to VALUE which should typically be true."
   (declare (important-return-value nil))
-  (repeat-fu--commands-mark commands value 'redo-fu-skip-active))
+  (repeat-fu--commands-mark commands value 'repeat-fu-skip-active))
 
 
 (defun repeat-fu--commands-mark-skip-change (commands value)
@@ -500,36 +500,36 @@ The property is set to VALUE which should typically be true."
 Commands such as save & undo should be included.
 The property is set to VALUE which should typically be true."
   (declare (important-return-value nil))
-  (repeat-fu--commands-mark commands value 'redo-fu-skip-change))
+  (repeat-fu--commands-mark commands value 'repeat-fu-skip-change))
+
 
 ;; ---------------------------------------------------------------------------
 ;; Public Functions
 
-
 (defun repeat-fu-command-test-skip (cmd)
-  "Return the `redo-fu-skip' property of CMD."
+  "Return the `repeat-fu-skip' property of CMD."
   (declare (important-return-value t))
   (cond
    ((symbolp cmd)
-    (get cmd 'redo-fu-skip))
+    (get cmd 'repeat-fu-skip))
    (t
     nil)))
 
 (defun repeat-fu-command-test-skip-active (cmd)
-  "Return the `redo-fu-skip-active' property of CMD."
+  "Return the `repeat-fu-skip-active' property of CMD."
   (declare (important-return-value t))
   (cond
    ((symbolp cmd)
-    (get cmd 'redo-fu-skip-active))
+    (get cmd 'repeat-fu-skip-active))
    (t
     nil)))
 
 (defun repeat-fu-command-test-skip-change (cmd)
-  "Return the `redo-fu-skip-change' property of CMD."
+  "Return the `repeat-fu-skip-change' property of CMD."
   (declare (important-return-value t))
   (cond
    ((symbolp cmd)
-    (get cmd 'redo-fu-skip-change))
+    (get cmd 'repeat-fu-skip-change))
    (t
     nil)))
 
