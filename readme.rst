@@ -2,8 +2,8 @@
 Emacs Repeat-FU
 ###############
 
-Repeat multi-command "edits" with configurable behavior,
-supporting multiple modal editing systems.
+Execute sequences of Emacs commands with a single keystroke,
+designed for modal editing workflows.
 
 Available via `melpa <https://melpa.org/#/repeat-fu>`__.
 
@@ -11,13 +11,9 @@ Available via `melpa <https://melpa.org/#/repeat-fu>`__.
 Motivation
 ==========
 
-At the time of writing, existing packages to repeat actions in emacs
-tend to only support repeating a single command.
+"Unlike built-in repeat commands that only replay single actions,
+Repeat-FU can replay *"select 3 words -> replace with text"* as one repeatable unit.
 
-An exception to this is the repeat from evil-mode which implements it's own logic for repeat,
-however this isn't usable outside of evil mode.
-
-Repeat-FU allows for repeat to combine multiple edits into a single repeating action.
 The exact behavior for this is configurable so it can be configured to work differently depending on the users needs.
 This is especially well suited to modal editing, where you may wish to repeat a change or insertion elsewhere.
 
@@ -34,6 +30,8 @@ After this, calling ``repeat-fu-execute`` will repeat the last edit,
 the exact behavior depends on the ``repeat-fu-preset`` which allows
 different behavior to be used based on your preferences.
 
+An "edit" includes buffer changes along with preceding selection/motion commands that set up the change.
+
 
 ----
 
@@ -46,9 +44,11 @@ This example shows how Repeat-FU can be used with the default emacs configuratio
       :bind
       ("C-." . repeat-fu-execute)
       :hook
-      (after-change-major-mode . (lambda ()
-                                   (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
-                                      (repeat-fu-mode)))))
+      (after-change-major-mode
+       .
+       (lambda ()
+         (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
+           (repeat-fu-mode)))))
 
 
 This example shows how Repeat-FU can be used with meow.
@@ -97,7 +97,7 @@ Custom Variables
    By convention, the following rules are followed for bundled presets.
 
    - Any selection that uses the mouse cursor causes selection
-     actions to be ignored as they can’t be repeated reliably.
+     commands to be ignored as they can’t be repeated reliably.
    - Undo/redo commands wont be handled as a new edit to be repeated.
      This means it’s possible to undo the ``repeat-fu-execute`` and repeat the
      action at a different location instead of repeating the undo.
@@ -159,7 +159,7 @@ Functions
       so it's possible to undo ``repeat-fu-execute`` and repeat the action elsewhere
       without the undo action being repeated.
 
-      This is different from ``:skip`` since undo actions *can* be repeated
+      This is different from ``:skip`` since undo *can* be repeated
       when part of multiple edits in ``insert`` mode - for presets that support this.
 
    The values should be t, other values such as function calls
@@ -177,16 +177,15 @@ These bundled presets can be used by setting ``repeat-fu-preset``.
 
 
 ``'meep``
-   Preset for Meep modal editing.
+   Preset for `MEEP modal editing <https://codeberg.org/ideasman42/emacs-meep>`__.
 
    This has matching functionality to the Meow preset.
 
 ``'meow``
-   Preset for Meow modal editing.
+   Preset for `Meow modal editing <https://github.com/meow-edit/meow>`__.
 
-   A preset written for meow which repeats
-   the last edit along with selection actions
-   preceding the edit.
+   A preset written for meow which repeats the last edit
+   along with selection commands preceding the edit.
 
    Changes made in insert mode are considered a single edit.
    When entering insert mode changes the buffer (typically `meow-change')
