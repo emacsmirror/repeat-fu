@@ -97,7 +97,7 @@ Custom Variables
    By convention, the following rules are followed for bundled presets.
 
    - Any selection that uses the mouse cursor causes selection
-     actions to be ignored as they can’t be repeated reliably.
+     commands to be ignored as they can’t be repeated reliably.
    - Undo/redo commands wont be handled as a new edit to be repeated.
      This means it’s possible to undo the ``repeat-fu-execute`` and repeat the
      action at a different location instead of repeating the undo.
@@ -159,7 +159,7 @@ Functions
       so it's possible to undo ``repeat-fu-execute`` and repeat the action elsewhere
       without the undo action being repeated.
 
-      This is different from ``:skip`` since undo actions *can* be repeated
+      This is different from ``:skip`` since undo *can* be repeated
       when part of multiple edits in ``insert`` mode - for presets that support this.
 
    The values should be t, other values such as function calls
@@ -184,8 +184,8 @@ These bundled presets can be used by setting ``repeat-fu-preset``.
 ``'meow``
    Preset for `Meow modal editing <https://github.com/meow-edit/meow>`__.
 
-   A preset written for meow which repeats
-   the last edit along with selection commands preceding the edit.
+   A preset written for meow which repeats the last edit
+   along with selection commands preceding the edit.
 
    Changes made in insert mode are considered a single edit.
    When entering insert mode changes the buffer (typically `meow-change')
