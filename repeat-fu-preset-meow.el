@@ -8,11 +8,10 @@
 ;; Author: Campbell Barton <ideasman42@gmail.com>
 
 ;;; Commentary:
-;; Preset for Meow modal editing.
+;; Preset for `Meow modal editing <https://github.com/meow-edit/meow>`__.
 ;;
-;; A preset written for meow which repeats
-;; the last edit along with selection actions
-;; preceding the edit.
+;; A preset written for meow which repeats the last edit
+;; along with selection commands preceding the edit.
 ;;
 ;; Changes made in insert mode are considered a single edit.
 ;; When entering insert mode changes the buffer (typically `meow-change')

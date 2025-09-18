@@ -8,7 +8,7 @@
 ;; Author: Campbell Barton <ideasman42@gmail.com>
 
 ;;; Commentary:
-;; Preset for Meep modal editing.
+;; Preset for `MEEP modal editing <https://codeberg.org/ideasman42/emacs-meep>`__.
 ;;
 ;; This has matching functionality to the Meow preset.
 
