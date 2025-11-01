@@ -221,7 +221,13 @@ DATA-PRE stores the state when the command began."
                              ;; some commands such as jump to the next search item
                              ;; may select but are not primarily selection commands
                              ;; so it's confusing to include them here.
-                             (list 'meep-region-toggle 'meep-region-syntax-expand))
+                             (list
+                              'meep-region-toggle
+                              'meep-region-syntax-expand
+                              'meep-region-mark-bounds-of-char-inner
+                              'meep-region-mark-bounds-of-char-outer
+                              'meep-region-mark-bounds-of-char-contextual-inner
+                              'meep-region-mark-bounds-of-char-contextual-outer))
                       (setq ok nil))
 
                     (cond
