@@ -64,7 +64,7 @@ DATA-PRE stores the state when the command began."
              (t
               (cons data-pre state-post)))))
       ;; Check `deactivate-mark' because the end user result is that the region isn't visible.
-      (when (and (region-active-p) (not deactivate-mark))
+      (when (and (region-active-p) (null deactivate-mark))
         (setq cmd-flag (logior cmd-flag repeat-fu-preset-meow--flag-is-active)))
 
       `[,cmd-flag ,this-command ,state-maybe-pair]))))
@@ -88,12 +88,14 @@ DATA-PRE stores the state when the command began."
 
          ;; Local lookups.
          (elem-is-prefix-fn
-          (lambda (i) (not (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-prefix)))))
+          (lambda (i)
+            (null (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-prefix)))))
          (elem-is-change-fn
-          (lambda (i) (not (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-change)))))
+          (lambda (i)
+            (null (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-change)))))
          (elem-is-active-fn
           (lambda (i)
-            (not
+            (null
              (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-preset-meow--flag-is-active)))))
 
          (elem-cmd-fn (lambda (i) (aref (cdr (aref vec i)) 1)))

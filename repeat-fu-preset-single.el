@@ -41,9 +41,11 @@
 
          ;; Local lookups.
          (elem-is-prefix-fn
-          (lambda (i) (not (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-prefix)))))
+          (lambda (i)
+            (null (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-prefix)))))
          (elem-is-change-fn
-          (lambda (i) (not (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-change)))))
+          (lambda (i)
+            (null (zerop (logand (aref (cdr (aref vec i)) 0) repeat-fu-flag-is-change)))))
 
          (elem-cmd-fn (lambda (i) (aref (cdr (aref vec i)) 1))))
 

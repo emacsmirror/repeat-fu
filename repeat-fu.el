@@ -202,7 +202,7 @@ The :post-data callback in `repeat-fu-backend' may use it.")
           (ring-capacity (length buf)))
 
 
-      (unless (and (not (zerop len))
+      (unless (and (null (zerop len))
                    (let ((num-and-elem (aref buf pos)))
                      (cond
                       ((equal elem (cdr num-and-elem))
@@ -665,7 +665,7 @@ Then it can be called with `call-last-kbd-macro', named with
           'repeat-fu--pre-data)))
 
     (cond
-     ((not repeat-fu-mode)
+     ((null repeat-fu-mode)
       (repeat-fu--hooks-remove)
 
       ;; Always kill local, in case this was ever local.
