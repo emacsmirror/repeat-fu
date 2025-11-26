@@ -665,7 +665,7 @@ Then it can be called with `call-last-kbd-macro', named with
           'repeat-fu--pre-data)))
 
     (cond
-     ((null repeat-fu-mode)
+     ((not repeat-fu-mode)
       (repeat-fu--hooks-remove)
 
       ;; Always kill local, in case this was ever local.
