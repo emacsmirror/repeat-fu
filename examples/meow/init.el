@@ -38,7 +38,7 @@
   ((meow-mode)
    .
    (lambda ()
-     (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
+     (when (and (null (minibufferp)) (null (derived-mode-p 'special-mode)))
        (repeat-fu-mode)
        (define-key meow-normal-state-keymap (kbd "C-'") 'repeat-fu-execute)
        (define-key meow-insert-state-keymap (kbd "C-'") 'repeat-fu-execute)))))
