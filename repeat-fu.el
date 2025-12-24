@@ -657,7 +657,8 @@ Then it can be called with `call-last-kbd-macro', named with
           'repeat-fu--macros-last
           'repeat-fu--macros-select-fn
           'repeat-fu--post-fn
-          'repeat-fu--pre-data)))
+          'repeat-fu--pre-data
+          'repeat-fu--pre-fn)))
 
     (cond
      ((not repeat-fu-mode)
