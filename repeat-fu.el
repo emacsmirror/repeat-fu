@@ -423,9 +423,13 @@ The :post-data callback in `repeat-fu-backend' may use it.")
     (unless macros-select-fn
       (message "Error, the key :macros-select was missing!")
       (setq success nil))
-    (unless pre-fn
-      (message "Error, the key :post-data was missing")
+    (unless post-fn
+      (message "Error, the key :post-data was missing!")
       (setq success nil))
+
+    ;; Use `ignore' as the default for the optional :pre-data callback.
+    (unless pre-fn
+      (setq pre-fn #'ignore))
 
     (setq repeat-fu--pre-fn pre-fn)
     (setq repeat-fu--post-fn post-fn)
