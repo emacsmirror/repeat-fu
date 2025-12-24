@@ -13,7 +13,7 @@
 ;; Repeats the last changing edits
 ;; along with any preceding prefix arguments.
 ;; Multiple calls to the same command are grouped
-;; so you can for example, repeat text insertion elsewhere.
+;; so you can, for example, repeat text insertion elsewhere.
 ;;
 ;; Events creating a selection (active-region)
 ;; leading up to the edit will also be repeated
@@ -107,7 +107,7 @@
                       ;; if so, treat this as text insertion.
                       (when (memq cmd cmd-self-insert-compat)
                         (let ((i index-change))
-                          ;; Skip
+                          ;; Skip over consecutive delete commands.
                           (while (and (< i vec-end)
                                       (memq (funcall elem-cmd-fn (1+ i)) cmd-self-insert-compat))
                             (incf i))

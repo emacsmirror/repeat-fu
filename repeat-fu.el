@@ -49,14 +49,14 @@
 (defcustom repeat-fu-preset 'multi
   "The named preset to use (as a symbol).
 This loads a bundled preset with the `repeat-fu-preset-' prefix.
-If you wish to define your own repeat logic, set:
-`repeat-fu-backend' P-list directly.
+If you wish to define your own repeat logic,
+set the `repeat-fu-backend' plist directly.
 
 By convention, the following rules are followed for bundled presets.
 
 - Any selection that uses the mouse cursor causes selection
   commands to be ignored as they can't be repeated reliably.
-- Undo/redo commands wont be handled as a new edit to be repeated.
+- Undo/redo commands won't be handled as a new edit to be repeated.
   This means it's possible to undo the `repeat-fu-execute' and repeat the
   action at a different location instead of repeating the undo."
   :type 'symbol)
@@ -67,7 +67,7 @@ By convention, the following rules are followed for bundled presets.
 
 (defcustom repeat-fu-last-used-on-quit t
   "When the last command is `keyboard-quit', repeat the last used macro.
-This allows any edit, to be ignored so the last repeated action can be reused.
+This allows any edit to be ignored so the last repeated action can be reused.
 
 This can be useful if an edit is made by accident."
   :type 'boolean)
@@ -75,15 +75,15 @@ This can be useful if an edit is made by accident."
 (defcustom repeat-fu-buffer-size 512
   "Maximum number of steps to store.
 When nil, all commands are stored,
-the `repeat-fu-backend' is responsible for ensuring buffer doesn't expand indefinitely."
-  :type 'integer)
+the `repeat-fu-backend' is responsible for ensuring the buffer doesn't expand indefinitely."
+  :type '(choice integer (const nil)))
 
 
 ;; ---------------------------------------------------------------------------
 ;; Public Variables
 
 (defvar repeat-fu-backend nil
-  "A P-list of callbacks used to implement repeat logic:
+  "A plist of callbacks used to implement repeat logic:
 
 :macros-extract
   Extract a macro from the history.
@@ -103,7 +103,7 @@ the `repeat-fu-backend' is responsible for ensuring buffer doesn't expand indefi
   and returns the macro which should be used.
 
 :pre-data (optional)
-  Store data before the command .
+  Store data before the command.
 
 :post-data
   Store data after the command.
@@ -145,7 +145,7 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 ;; ==============
 
 ;; Needed for commands that override this-command.
-;; This data stored by `repeat-fu--pre-fn' on entering each command.
+;; This data is stored by `repeat-fu--pre-fn' on entering each command.
 (defvar repeat-fu--pre-data nil)
 
 ;; Did last command change buffer?
@@ -157,7 +157,7 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 ;; Use an accumulating buffer OR a ring buffer.
 
 ;; Needed so `repeat-fu-execute' can skip itself.
-;; Executing the macro overwrites `this-command.'.
+;; Executing the macro overwrites `this-command'.
 ;; When set, the command is not stored.
 (defvar repeat-fu--cmd-skip nil)
 
@@ -414,7 +414,7 @@ The :post-data callback in `repeat-fu-backend' may use it.")
          (message "Unknown keyword: %S" key))))
 
     (when preset
-      (message "presets contain non key/value pairs: %S " preset)
+      (message "Presets contain non key/value pairs: %S" preset)
       (setq success nil))
 
     (unless macros-extract-fn
@@ -477,18 +477,16 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 
 (defun repeat-fu--commands-mark-skip (commands value)
   "Ignore COMMANDS entirely.
-Commands that aren't related to editing should be marked especially save.
+Commands that aren't related to editing should be marked as safe.
 The property is set to VALUE which should typically be true."
   (declare (important-return-value nil))
   (repeat-fu--commands-mark commands value 'repeat-fu-skip))
 
 (defun repeat-fu--commands-mark-skip-active (commands value)
   "Ignore COMMANDS from region activation.
-This means, any commands that create the region using these commands
+This means any commands that create the region using these commands
 won't repeat any active-region manipulation.
-This should typically be used any region manipulation that uses the mouse.
-
-Commands such as save & undo should be included.
+This should typically be used for region manipulation that uses the mouse.
 The property is set to VALUE which should typically be true."
   (declare (important-return-value nil))
   (repeat-fu--commands-mark commands value 'repeat-fu-skip-active))
@@ -552,7 +550,7 @@ The PLIST must only contain the following keys.
    When non-nil, the command won't include the active-region
    when one of these functions was used to create it.
 
-   By default, ``mouse-set-region`` uses this so repeating an action
+   By default, `mouse-set-region' uses this so repeating an action
    doesn't attempt to replay the mouse-drag used for selection.
 :skip-change
    When non-nil, commands that change the buffer will be skipped
@@ -609,7 +607,7 @@ The prefix argument ARG serves as a repeat count."
   (let ((kbuf (repeat-fu--extract-repeat-macro-or-last)))
     (cond
      ((null kbuf)
-      (message "Nothing to repeat"))
+      (message "Nothing to repeat."))
      (t
       ;; Execute the macro.
       (repeat-fu--without-hooks
@@ -619,14 +617,14 @@ The prefix argument ARG serves as a repeat count."
           ((error quit exit)
            (repeat-fu--clear)
            (setq repeat-fu--macros-last nil)
-           (message "Repeat reset (failed)"))))))))
+           (message "Repeat reset (failed)."))))))))
 
 ;;;###autoload
 (defun repeat-fu-copy-to-last-kbd-macro ()
   "Copy the current `repeat-fu' command buffer to the `last-kbd-macro' variable.
 Then it can be called with `call-last-kbd-macro', named with
 `name-last-kbd-macro', or even saved for later use with
-`name-last-kbd-macro'"
+`insert-kbd-macro'."
   (declare (important-return-value nil))
   (interactive)
   (repeat-fu--mode-enabled-or-error)

@@ -208,7 +208,7 @@ DATA-PRE stores the state when the command began."
 
                 ;; `meep-region-activate-or-reverse', `meep-region-activate-and-reverse'
                 ;; (or similar `meep-command-is-mark-activate') functions are a special case,
-                ;; as this will have selected "and" depended on the previous motion.
+                ;; as this selection depends on the previous motion.
                 ;; In this case there is no need to make any further changes.
                 ;; We can continue to scan for mark commands.
                 (let ((cmd (funcall elem-cmd-fn index-max)))
@@ -221,7 +221,7 @@ DATA-PRE stores the state when the command began."
                     (unless (memq
                              cmd
                              ;; Limit the number of commands,
-                             ;; some commands such as jump to the next search item
+                             ;; as some commands such as jump to the next search item
                              ;; may select but are not primarily selection commands
                              ;; so it's confusing to include them here.
                              (list
