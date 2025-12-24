@@ -274,10 +274,8 @@ The :post-data callback in `repeat-fu-backend' may use it.")
   (condition-case err
       (funcall repeat-fu--macros-extract-fn cmd-buffer)
     (error
-     (progn
-       (message "Repeat-FU: error in `repeat-fu--macros-extract-fn' (%s)"
-                (error-message-string err))
-       nil))))
+     (message "Repeat-FU: error in `repeat-fu--macros-extract-fn' (%s)" (error-message-string err))
+     nil)))
 
 (defsubst repeat-fu--select-fn-wrapper (kbuf-list)
   "Select the macro from KBUF-LIST."
@@ -285,9 +283,8 @@ The :post-data callback in `repeat-fu-backend' may use it.")
   (condition-case err
       (funcall repeat-fu--macros-select-fn kbuf-list)
     (error
-     (progn
-       (message "Repeat-FU: error in `repeat-fu--post-fn' (%s)" (error-message-string err))
-       nil))))
+     (message "Repeat-FU: error in `repeat-fu--macros-select-fn' (%s)" (error-message-string err))
+     nil)))
 
 (defsubst repeat-fu--pre-fn-wrapper ()
   "Pre command wrapper."
@@ -317,9 +314,8 @@ The :post-data callback in `repeat-fu-backend' may use it.")
   "Extract a macro from previous commands or return the last extracted macro."
   (declare (important-return-value t))
 
-  (when repeat-fu-last-used-on-quit
-    (when (eq last-command 'keyboard-quit)
-      (repeat-fu--clear)))
+  (when (and repeat-fu-last-used-on-quit (eq last-command 'keyboard-quit))
+    (repeat-fu--clear))
 
   (let ((kbuf-list (repeat-fu--extract-fn-wrapper (repeat-fu--cmd-buffer-get))))
     (when kbuf-list
@@ -376,7 +372,7 @@ The :post-data callback in `repeat-fu-backend' may use it.")
   (remove-hook 'prefix-command-preserve-state-hook #'repeat-fu--prefix-command-hook t))
 
 (defun repeat-fu--hooks-add ()
-  "Setup hooks."
+  "Set up hooks."
   (declare (important-return-value nil))
 
   (add-hook 'pre-command-hook #'repeat-fu--pre-hook nil t)
@@ -414,9 +410,8 @@ The :post-data callback in `repeat-fu-backend' may use it.")
         (:pre-data (setq pre-fn (pop preset)))
         (:post-data (setq post-fn (pop preset)))
         (_
-         (progn
-           (setq preset (cdr-safe preset))
-           (message "unknown keyword: %S" key)))))
+         (setq preset (cdr-safe preset))
+         (message "Unknown keyword: %S" key))))
 
     (when preset
       (message "presets contain non key/value pairs: %S " preset)
@@ -674,18 +669,18 @@ Then it can be called with `call-last-kbd-macro', named with
         (set var (default-value var))))
      (t
       (unless repeat-fu-backend
-        (let ((preset-value (symbol-name repeat-fu-preset)))
-          (let ((preset-sym (intern (concat "repeat-fu-preset-" preset-value))))
-            (when (condition-case err
-                      (progn
-                        (require preset-sym)
-                        t)
-                    (error
-                     (message "repeat-fu: preset '%s' not found! (%s)"
-                              preset-value
-                              (error-message-string err))
-                     nil))
-              (setq repeat-fu-backend (funcall preset-sym))))))
+        (let* ((preset-value (symbol-name repeat-fu-preset))
+               (preset-sym (intern (concat "repeat-fu-preset-" preset-value))))
+          (when (condition-case err
+                    (progn
+                      (require preset-sym)
+                      t)
+                  (error
+                   (message "repeat-fu: preset '%s' not found! (%s)"
+                            preset-value
+                            (error-message-string err))
+                   nil))
+            (setq repeat-fu-backend (funcall preset-sym)))))
 
       (repeat-fu--preset-refresh)
 
