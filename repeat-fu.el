@@ -602,9 +602,6 @@ The prefix argument ARG serves as a repeat count."
   (interactive "p")
   (repeat-fu--mode-enabled-or-error)
 
-  (unless arg
-    (setq arg 1))
-
   ;; Execution must not trigger infinite recursion,
   ;; nor record any new steps.
   (setq repeat-fu--cmd-skip t)
