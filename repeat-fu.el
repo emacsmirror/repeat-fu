@@ -76,7 +76,7 @@ This can be useful if an edit is made by accident."
   "Maximum number of steps to store.
 When nil, all commands are stored,
 the `repeat-fu-backend' is responsible for ensuring the buffer doesn't expand indefinitely."
-  :type '(choice integer (const nil)))
+  :type '(choice natnum (const nil)))
 
 
 ;; ---------------------------------------------------------------------------
