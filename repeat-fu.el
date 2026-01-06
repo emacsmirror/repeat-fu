@@ -49,8 +49,8 @@
 (defcustom repeat-fu-preset 'multi
   "The named preset to use (as a symbol).
 This loads a bundled preset with the `repeat-fu-preset-' prefix.
-If you wish to define your own repeat logic,
-set the `repeat-fu-backend' plist directly.
+If you wish to define your own repeat logic, set:
+`repeat-fu-backend' P-list directly.
 
 By convention, the following rules are followed for bundled presets.
 
@@ -623,7 +623,7 @@ The prefix argument ARG serves as a repeat count."
 (defun repeat-fu-copy-to-last-kbd-macro ()
   "Copy the current `repeat-fu' command buffer to the `last-kbd-macro' variable.
 Then it can be called with `call-last-kbd-macro', named with
-`name-last-kbd-macro', or even saved for later use with
+`name-last-kbd-macro', or saved for later use with
 `insert-kbd-macro'."
   (declare (important-return-value nil))
   (interactive)

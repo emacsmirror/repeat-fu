@@ -45,6 +45,9 @@ def patch_help_test(emacs_output: str) -> str:
     # with a single quote.
     emacs_output = emacs_output.replace("\\\\='", "'")
 
+    # Replace Unicode apostrophe with ASCII.
+    emacs_output = emacs_output.replace("\u2019", "'")
+
     return emacs_output
 
 

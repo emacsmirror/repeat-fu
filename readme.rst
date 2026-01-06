@@ -11,7 +11,7 @@ Available via `melpa <https://melpa.org/#/repeat-fu>`__.
 Motivation
 ==========
 
-"Unlike built-in repeat commands that only replay single actions,
+Unlike built-in repeat commands that only replay single actions,
 Repeat-FU can replay *"select 3 words -> replace with text"* as one repeatable unit.
 
 The exact behavior for this is configurable so it can be configured to work differently depending on the users needs.
@@ -73,7 +73,7 @@ This example shows how Repeat-FU can be used with meow.
 Customizing Commands
 --------------------
 
-Command can be customized using ``repeat-fu-declare``, this example ensures a
+Commands can be customized using ``repeat-fu-declare``, this example ensures a
 custom save command is never repeated.
 
 .. code-block:: elisp
@@ -97,9 +97,9 @@ Custom Variables
    By convention, the following rules are followed for bundled presets.
 
    - Any selection that uses the mouse cursor causes selection
-     commands to be ignored as they can’t be repeated reliably.
-   - Undo/redo commands wont be handled as a new edit to be repeated.
-     This means it’s possible to undo the ``repeat-fu-execute`` and repeat the
+     commands to be ignored as they can't be repeated reliably.
+   - Undo/redo commands won't be handled as a new edit to be repeated.
+     This means it's possible to undo the ``repeat-fu-execute`` and repeat the
      action at a different location instead of repeating the undo.
 
 ``repeat-fu-global-mode``: ``t``
@@ -107,14 +107,14 @@ Custom Variables
 
 ``repeat-fu-last-used-on-quit``: ``t``
    When the last command is ``keyboard-quit``, repeat the last used macro.
-   This allows any edit, to be ignored so the last repeated action can be reused.
+   This allows any edit to be ignored so the last repeated action can be reused.
 
    This can be useful if an edit is made by accident.
 
 ``repeat-fu-buffer-size``: ``512``
    Maximum number of steps to store.
    When nil, all commands are stored,
-   the ``repeat-fu-backend`` is responsible for ensuring buffer doesn’t expand indefinitely.
+   the ``repeat-fu-backend`` is responsible for ensuring the buffer doesn't expand indefinitely.
 
 
 Commands
@@ -127,8 +127,8 @@ Commands
 ``(repeat-fu-copy-to-last-kbd-macro)``
    Copy the current ``repeat-fu`` command buffer to the ``last-kbd-macro`` variable.
    Then it can be called with ``call-last-kbd-macro``, named with
-   ``name-last-kbd-macro``, or even saved for later use with
-   ``name-last-kbd-macro``
+   ``name-last-kbd-macro``, or saved for later use with
+   ``insert-kbd-macro``.
 
 
 Functions

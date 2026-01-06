@@ -13,7 +13,7 @@
 ;; Repeats the last changing edits
 ;; along with any preceding prefix arguments.
 ;; Multiple calls to the same command are grouped
-;; so you can, for example, repeat text insertion elsewhere.
+;; so you can for example, repeat text insertion elsewhere.
 ;;
 ;; Events creating a selection (active-region)
 ;; leading up to the edit will also be repeated
