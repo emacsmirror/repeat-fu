@@ -62,7 +62,7 @@ By convention, the following rules are followed for bundled presets.
   :type 'symbol)
 
 (defcustom repeat-fu-global-mode t
-  "When true, `repeat-fu' shares its command buffer between buffers."
+  "When non-nil, `repeat-fu' shares its command buffer between buffers."
   :type 'boolean)
 
 (defcustom repeat-fu-last-used-on-quit t
