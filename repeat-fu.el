@@ -174,6 +174,16 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 ;; The last extracted macros.
 (defvar repeat-fu--macros-last nil)
 
+;; Listener State
+;; ==============
+
+;; Weak-key hash table mapping listener tokens to (state . (dummy-head . tail)) entries.
+;; Dummy-head avoids a conditional on append; the recorded list is (cdr dummy-head).
+;; Tokens are opaque objects held by callers; when a caller drops its reference
+;; without calling `repeat-fu-listener-unregister', GC removes the entry.
+;; Created on first use, nil when no listener has been requested.
+(defvar repeat-fu--listeners nil)
+
 
 ;; ---------------------------------------------------------------------------
 ;; Internal Ring Buffer Implementation
@@ -254,11 +264,24 @@ The :post-data callback in `repeat-fu-backend' may use it.")
    ((null (car elem))
     (when this-command
       (error "Internal error `keys' was null with %S" this-command)))
-
-   (repeat-fu-buffer-size
-    (repeat-fu--ringbuf-push repeat-fu--cmd-ring elem))
    (t
-    (push elem repeat-fu--cmd-accum))))
+    (cond
+     (repeat-fu-buffer-size
+      (repeat-fu--ringbuf-push repeat-fu--cmd-ring elem))
+     (t
+      (push elem repeat-fu--cmd-accum)))
+
+    ;; Also accumulate for active listeners.
+    (when repeat-fu--listeners
+      (maphash
+       (lambda (_token entry)
+         (when (eq (car entry) t)
+           ;; Append via tail pointer; entry is (state . (dummy-head . tail)).
+           (let ((cell (cons elem nil))
+                 (accum (cdr entry)))
+             (setcdr (cdr accum) cell)
+             (setcdr accum cell))))
+       repeat-fu--listeners)))))
 
 
 ;; ---------------------------------------------------------------------------
@@ -347,7 +370,15 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 
   (setq repeat-fu-this-command-bitmask 0)
   (setq repeat-fu--cmd-skip nil)
-  (setq repeat-fu--pre-data (repeat-fu--pre-fn-wrapper)))
+  (setq repeat-fu--pre-data (repeat-fu--pre-fn-wrapper))
+
+  ;; Activate pending listeners (skips the command that called `repeat-fu-listener-register').
+  (when repeat-fu--listeners
+    (maphash
+     (lambda (_token entry)
+       (when (eq (car entry) 'pending)
+         (setcar entry t)))
+     repeat-fu--listeners)))
 
 
 (defun repeat-fu--post-hook ()
@@ -530,7 +561,86 @@ The property is set to VALUE which should typically be true."
 
 
 ;; ---------------------------------------------------------------------------
-;; Public Functions
+;; Public Functions (Listener)
+
+;;;###autoload
+(defun repeat-fu-listener-register ()
+  "Register a listener that records keys for later collection.
+Keys pressed during the current command are not included;
+recording starts with the next command.
+
+Returns an opaque token for use with `repeat-fu-listener-collect'
+and `repeat-fu-listener-unregister'.  Multiple listeners may be
+active concurrently.
+
+Callers must pass the token to `repeat-fu-listener-unregister' when done.
+If the token is dropped without unregistering (e.g. the owning buffer is
+killed), the weak-reference storage allows GC to reclaim the entry
+eventually, but this is a fallback — explicit cleanup via
+`repeat-fu-listener-unregister' is preferred."
+  (declare (important-return-value t))
+  (unless repeat-fu--listeners
+    (setq repeat-fu--listeners (make-hash-table :weakness 'key :test 'eq)))
+  (let ((token (cons nil nil)))
+    ;; Entry is (state . (dummy-head . tail)).  Dummy-head avoids a conditional
+    ;; on append (tail always has a cdr to setcdr into).
+    ;; The recorded list is (cdr dummy-head).
+    (let ((dummy-head (cons nil nil)))
+      (puthash token (cons 'pending (cons dummy-head dummy-head)) repeat-fu--listeners))
+    token))
+
+;;;###autoload
+(defun repeat-fu-listener-unregister (token)
+  "Unregister a listener, stopping recording and freeing its resources.
+TOKEN must be a value returned by `repeat-fu-listener-register'.
+Does nothing if TOKEN is nil or was already unregistered.
+Prefer this over dropping the token and relying on GC."
+  (declare (important-return-value nil))
+  (when (and token repeat-fu--listeners)
+    (remhash token repeat-fu--listeners)
+    ;; Drop the table when empty so the hot-path nil check in
+    ;; `repeat-fu--pre-hook' / `repeat-fu--cmd-buffer-push' can short-circuit.
+    (when (zerop (hash-table-count repeat-fu--listeners))
+      (setq repeat-fu--listeners nil))))
+
+(defun repeat-fu--listener-entry-keys (entry)
+  "Return recorded keys from listener ENTRY as a vector, or nil.
+Entry is (state . (dummy-head . tail)); the list is (cdr dummy-head)."
+  (declare (important-return-value t))
+  (let ((entries (cdr (cadr entry))))
+    (when entries
+      (apply #'vconcat (mapcar #'car entries)))))
+
+;;;###autoload
+(defun repeat-fu-listener-collect (token)
+  "Return keys recorded by TOKEN as a vector.
+TOKEN must be a value returned by `repeat-fu-listener-register'.
+Returns nil if no keys were recorded or TOKEN is nil.
+The listener remains active and continues recording."
+  (declare (important-return-value t))
+  (when (and token repeat-fu--listeners)
+    (let ((entry (gethash token repeat-fu--listeners)))
+      (when entry
+        (repeat-fu--listener-entry-keys entry)))))
+
+;;;###autoload
+(defun repeat-fu-listener-unregister-and-collect (token)
+  "Unregister a listener and return its recorded keys as a vector.
+TOKEN must be a value returned by `repeat-fu-listener-register'.
+Returns nil if no keys were recorded or TOKEN is nil.
+Equivalent to `repeat-fu-listener-collect' followed by
+`repeat-fu-listener-unregister'."
+  (declare (important-return-value t))
+  (when (and token repeat-fu--listeners)
+    ;; Read entry before unregister removes it from the table.
+    (let ((entry (gethash token repeat-fu--listeners)))
+      (repeat-fu-listener-unregister token)
+      (when entry
+        (repeat-fu--listener-entry-keys entry)))))
+
+
+;; ---------------------------------------------------------------------------
+;; Public Functions (Core)
 
 ;;;###autoload
 (defun repeat-fu-declare (symbols &rest plist)
@@ -645,6 +755,7 @@ Then it can be called with `call-last-kbd-macro', named with
 
   (let ((local-vars
          (list
+          'repeat-fu--listeners
           'repeat-fu--cmd-accum
           'repeat-fu--cmd-ring
           'repeat-fu--cmd-skip

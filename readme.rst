@@ -103,7 +103,7 @@ Custom Variables
      action at a different location instead of repeating the undo.
 
 ``repeat-fu-global-mode``: ``t``
-   When true, ``repeat-fu`` shares its command buffer between buffers.
+   When non-nil, ``repeat-fu`` shares its command buffer between buffers.
 
 ``repeat-fu-last-used-on-quit``: ``t``
    When the last command is ``keyboard-quit``, repeat the last used macro.
@@ -133,6 +133,40 @@ Commands
 
 Functions
 ---------
+
+``(repeat-fu-listener-register)``
+   Register a listener that records keys for later collection.
+   Keys pressed during the current command are not included;
+   recording starts with the next command.
+
+   Returns an opaque token for use with ``repeat-fu-listener-collect``
+   and ``repeat-fu-listener-unregister``.  Multiple listeners may be
+   active concurrently.
+
+   Callers must pass the token to ``repeat-fu-listener-unregister`` when done.
+   If the token is dropped without unregistering (e.g. the owning buffer is
+   killed), the weak-reference storage allows GC to reclaim the entry
+   eventually, but this is a fallback — explicit cleanup via
+   ``repeat-fu-listener-unregister`` is preferred.
+
+``(repeat-fu-listener-unregister TOKEN)``
+   Unregister a listener, stopping recording and freeing its resources.
+   TOKEN must be a value returned by ``repeat-fu-listener-register``.
+   Does nothing if TOKEN is nil or was already unregistered.
+   Prefer this over dropping the token and relying on GC.
+
+``(repeat-fu-listener-collect TOKEN)``
+   Return keys recorded by TOKEN as a vector.
+   TOKEN must be a value returned by ``repeat-fu-listener-register``.
+   Returns nil if no keys were recorded or TOKEN is nil.
+   The listener remains active and continues recording.
+
+``(repeat-fu-listener-unregister-and-collect TOKEN)``
+   Unregister a listener and return its recorded keys as a vector.
+   TOKEN must be a value returned by ``repeat-fu-listener-register``.
+   Returns nil if no keys were recorded or TOKEN is nil.
+   Equivalent to ``repeat-fu-listener-collect`` followed by
+   ``repeat-fu-listener-unregister``.
 
 ``(repeat-fu-declare SYMBOLS &rest PLIST)``
    Support for controlling how ``repeat-fu`` handles commands.
