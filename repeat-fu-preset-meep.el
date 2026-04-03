@@ -226,6 +226,9 @@ DATA-PRE stores the state when the command began."
                              ;; so it's confusing to include them here.
                              (list
                               'meep-region-toggle
+                              'meep-region-enable
+                              'meep-region-enable-rectangle
+                              'meep-region-toggle-rectangle
                               'meep-region-syntax-expand
                               'meep-region-mark-bounds-of-char-inner
                               'meep-region-mark-bounds-of-char-outer
