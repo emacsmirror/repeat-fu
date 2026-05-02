@@ -28,11 +28,13 @@
     (defmacro incf (place &optional delta)
       "Increment PLACE by DELTA or 1."
       (declare (debug (gv-place &optional form)))
-      (gv-letplace (getter setter) place (funcall setter `(+ ,getter ,(or delta 1)))))
+      (gv-letplace (getter setter) place
+        (funcall setter `(+ ,getter ,(or delta 1)))))
     (defmacro decf (place &optional delta)
       "Decrement PLACE by DELTA or 1."
       (declare (debug (gv-place &optional form)))
-      (gv-letplace (getter setter) place (funcall setter `(- ,getter ,(or delta 1)))))))
+      (gv-letplace (getter setter) place
+        (funcall setter `(- ,getter ,(or delta 1)))))))
 
 
 ;; ---------------------------------------------------------------------------
@@ -781,15 +783,22 @@ Then it can be called with `call-last-kbd-macro', named with
         (let* ((preset-value (symbol-name repeat-fu-preset))
                (preset-sym (intern (concat "repeat-fu-preset-" preset-value))))
           (when (condition-case err
-                    (progn
-                      (require preset-sym)
-                      t)
+                    (require preset-sym nil 'noerror)
                   (error
-                   (message "repeat-fu: preset '%s' not found! (%s)"
-                            preset-value
-                            (error-message-string err))
+                   (lwarn
+                    'repeat-fu
+                    :error "preset %S failed: %s" preset-value (error-message-string err))
                    nil))
-            (setq repeat-fu-backend (funcall preset-sym)))))
+            (cond
+             ((fboundp preset-sym)
+              (setq repeat-fu-backend (funcall preset-sym)))
+             (t
+              (lwarn
+               'repeat-fu
+               :error
+               "preset %S loaded but did not define function `%S'"
+               preset-value
+               preset-sym))))))
 
       (repeat-fu--preset-refresh)
 
