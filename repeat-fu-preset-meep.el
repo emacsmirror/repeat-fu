@@ -23,6 +23,7 @@
 (declare-function meep-command-is-mark-on-motion-exclude "meep" (cmd))
 (declare-function meep-command-is-mark-set-on-motion "meep" (cmd))
 (declare-function meep-command-is-mark-set-on-motion-adjust "meep" (cmd))
+(declare-function meep-command-is-mark-activate-repeat "meep" (cmd))
 (declare-function meep-command-is-mark-set-on-motion-no-repeat "meep" (cmd))
 (declare-function meep-state-insert "meep" ())
 
@@ -218,22 +219,11 @@ DATA-PRE stores the state when the command began."
                     ;; could have been invoked by the mouse cursor or by
                     ;; some other action - such as dragging with the mouse cursor
                     ;; which the user would not expect to be part of a "chain" of commands.
-                    (unless (memq
-                             cmd
-                             ;; Limit the number of commands,
-                             ;; as some commands such as jump to the next search item
-                             ;; may select but are not primarily selection commands
-                             ;; so it's confusing to include them here.
-                             (list
-                              'meep-region-toggle
-                              'meep-region-enable
-                              'meep-region-enable-rectangle
-                              'meep-region-toggle-rectangle
-                              'meep-region-syntax-expand
-                              'meep-region-mark-bounds-of-char-inner
-                              'meep-region-mark-bounds-of-char-outer
-                              'meep-region-mark-bounds-of-char-contextual-inner
-                              'meep-region-mark-bounds-of-char-contextual-outer))
+                    ;; Limit the number of commands,
+                    ;; as some commands such as jump to the next search item
+                    ;; may select but are not primarily selection commands
+                    ;; so it's confusing to include them here.
+                    (unless (meep-command-is-mark-activate-repeat cmd)
                       (setq ok nil))
 
                     (cond
