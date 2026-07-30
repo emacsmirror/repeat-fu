@@ -109,6 +109,9 @@ the `repeat-fu-backend' is responsible for ensuring the buffer doesn't expand in
   Store data after the command.
   Takes a single argument - the output of the `:pre-data' callback.
 
+The `:pre-data' & `:post-data' callbacks run on every command and are
+intentionally not error-checked.  They must not signal errors, doing so
+removes the command hooks, silently ending recording for the buffer.
 
 The value must be set before the mode has been initialized.
 If the value is changed, `repeat-fu-mode' will have to be restarted.")
@@ -308,6 +311,11 @@ The :post-data callback in `repeat-fu-backend' may use it.")
     (error
      (message "Repeat-FU: error in `repeat-fu--macros-select-fn' (%s)" (error-message-string err))
      nil)))
+
+;; NOTE: unlike the wrappers above, these run on every command so the overhead of error
+;; handling isn't justified. Their callbacks *must not* signal - as these run from
+;; `pre-command-hook' & `post-command-hook', Emacs removes the hook on any signal
+;; (quit included), silently ending recording for the buffer.
 
 (defsubst repeat-fu--pre-fn-wrapper ()
   "Pre command wrapper."
