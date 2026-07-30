@@ -326,12 +326,19 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 (defmacro repeat-fu--without-hooks (&rest body)
   "Run BODY without hooks."
   (declare (indent 0))
-  `(unwind-protect
-       (progn
-         (repeat-fu--hooks-remove)
-         ,@body)
-     ;; Protected.
-     (repeat-fu--hooks-add)))
+  ;; NOTE: the hooks are buffer-local and BODY may leave another buffer current
+  ;; (running a macro that switches buffers), restore them where they were removed.
+  (let ((buf-sym (gensym "buf")))
+    `(let ((,buf-sym (current-buffer)))
+       (unwind-protect
+           (progn
+             (repeat-fu--hooks-remove)
+             ,@body)
+         ;; Protected.
+         ;; Unlikely but possible BODY kills the buffer.
+         (when (buffer-live-p ,buf-sym)
+           (with-current-buffer ,buf-sym
+             (repeat-fu--hooks-add)))))))
 
 (defun repeat-fu--extract-repeat-macro-or-last ()
   "Extract a macro from previous commands or return the last extracted macro."
