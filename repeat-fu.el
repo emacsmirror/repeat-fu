@@ -151,12 +151,6 @@ The :post-data callback in `repeat-fu-backend' may use it.")
 ;; This data is stored by `repeat-fu--pre-fn' on entering each command.
 (defvar repeat-fu--pre-data nil)
 
-;; Did last command change buffer?
-(defvar repeat-fu--is-change nil)
-
-;; Marker variable to show the prefix argument has been changed.
-(defvar repeat-fu--is-prefix nil)
-
 ;; Use an accumulating buffer OR a ring buffer.
 
 ;; Needed so `repeat-fu-execute' can skip itself.
@@ -776,8 +770,6 @@ Then it can be called with `call-last-kbd-macro', named with
           'repeat-fu--cmd-accum
           'repeat-fu--cmd-ring
           'repeat-fu--cmd-skip
-          'repeat-fu--is-change
-          'repeat-fu--is-prefix
           'repeat-fu--macros-extract-fn
           'repeat-fu--macros-last
           'repeat-fu--macros-select-fn
