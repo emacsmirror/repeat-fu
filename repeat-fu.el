@@ -807,12 +807,10 @@ Then it can be called with `call-last-kbd-macro', named with
                preset-value
                preset-sym))))))
 
-      (repeat-fu--preset-refresh)
-
-      (repeat-fu--hooks-add)
-
-      (repeat-fu--mark-commands-setup)
-
+      ;; This runs before `repeat-fu--preset-refresh' since the callbacks it sets are buffer-local too.
+      ;; Enabling the mode in a buffer that already has them local (a mode hook running twice)
+      ;; copied the shared value over what the refresh had just stored,
+      ;; silently leaving the buffer on whichever preset was enabled last.
       (cond
        (repeat-fu-global-mode
         (dolist (var local-vars)
@@ -822,6 +820,12 @@ Then it can be called with `call-last-kbd-macro', named with
         (dolist (var local-vars)
           (make-local-variable var)
           (set var (default-value var)))))
+
+      (repeat-fu--preset-refresh)
+
+      (repeat-fu--hooks-add)
+
+      (repeat-fu--mark-commands-setup)
 
       (when repeat-fu-buffer-size
         ;; Only re-create the vector if necessary.
